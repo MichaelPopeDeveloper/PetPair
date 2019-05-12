@@ -17,7 +17,7 @@ import { connect } from 'mongoose';
 export class Server {
   private port: any = process.env.PORT || 3001;
   public app: express.Application;
-  private dbName = 'QNotes';
+  private dbName = 'pet-finder';
 
   /**
    * Bootstrap the application.

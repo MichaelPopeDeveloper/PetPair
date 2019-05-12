@@ -11,7 +11,7 @@ var mongoose_1 = require("mongoose");
 var Server = (function () {
     function Server() {
         this.port = process.env.PORT || 3001;
-        this.dbName = 'QNotes';
+        this.dbName = 'pet-finder';
         this.app = express();
         this.config();
         this.routes();
