@@ -24,22 +24,15 @@ class Signup extends Component {
     super();
     this.state = {
       username: '',
-      email: '',
       password: '',
       authenticated: false,
     };
-    this.login = this.login.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handlePaswordChange = this.handlePaswordChange.bind(this);
   }
 
-  login() {
-    const { username, email, password } = this.state;
+  login = () => {
+    const { username, password } = this.state;
     axios.post('/user/signup', {
       username,
-      email,
       password,
     })
       .then((res) => {
@@ -50,26 +43,22 @@ class Signup extends Component {
   }
 
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
     this.login();
   }
 
-  handleUsernameChange(event) {
+  handleUsernameChange = (event) => {
     this.setState({ username: event.target.value });
   }
 
-  handleEmailChange(event) {
-    this.setState({ email: event.target.value });
-  }
-
-  handlePaswordChange(event) {
+  handlePaswordChange = (event) => {
     this.setState({ password: event.target.value });
   }
 
 
   render() {
-    const { username, email, password } = this.state;
+    const { username, password } = this.state;
     const { user } = this.props.state;
     if (user) return <Redirect
       to={{
@@ -92,15 +81,10 @@ class Signup extends Component {
                 <input value={username} onChange={this.handleUsernameChange} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Username" />
               </div>
               <div class="form-group">
-                <label for="exampleInputEmail1">email</label>
-                <input value={email} onChange={this.handleEmailChange} type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" />
-                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
-              </div>
-              <div class="form-group">
                 <label for="exampleInputPassword1">Password</label>
                 <input value={password} onChange={this.handlePaswordChange} type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" />
               </div>
-              <button type="submit" className="btn btn-primary">Login</button>
+              <button type="submit" className="btn btn-primary">Sign Up</button>
             </form>
 
           </div>

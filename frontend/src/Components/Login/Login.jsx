@@ -1,4 +1,4 @@
-    
+
 import React, { Component } from 'react';
 import * as axios from 'axios';
 import '../../styles/app.css';
@@ -8,6 +8,7 @@ import {
   Link,
 } from "react-router-dom";
 import { loginUser } from '../../actions/index';
+
 
 const mapStateToProps = state => {
   // return { articles: state.articles };
@@ -25,18 +26,51 @@ class Login extends Component {
     super();
     this.state = {
       username: '',
-      email: '',
       password: '',
-      errorMessage: ''
+      errorMessage: '',
     };
-    this.login = this.login.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handlePaswordChange = this.handlePaswordChange.bind(this);
   }
 
-  login() {
+  componentWillMount() {
+    const petFinderConfig = {
+      APIKey: process.env.PetFinderAPIKey || '',
+      secret: process.env.PetFinderSecret || '',
+    };
+    const { APIKey, secret } = petFinderConfig;
+
+    axios.post('https://api.petfinder.com/v2/oauth2/token',
+      {
+        grant_type: 'client_credentials',
+        client_id: APIKey,
+        client_secret: secret,
+        headers: {
+          'Content-Type': null
+        }
+      })
+      .then(result => {
+        console.log('result', result);
+        localStorage.setItem('PFT', result.data.access_token);
+        axios.get('https://api.petfinder.com/v2/animals?type=dog&page=2&location=89135',
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem('PFT'),
+            // "Access-Control-Allow-Origin": "*",
+          }
+        })
+        .then(result => console.log('dog data', result))
+        .catch(error => {
+          console.log('dog data error', error);
+        });
+      })
+      .catch(error => {
+        console.log('pet finder error', error);
+        localStorage.clear();
+      });
+
+ 
+  }
+
+  login = () => {
     const { username, password } = this.state;
     axios.post('/user/login', {
       username,
@@ -50,21 +84,17 @@ class Login extends Component {
   }
 
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
     const { username, email, password } = this.state;
     this.login({ username, email, password });
   }
 
-  handleUsernameChange(event) {
+  handleUsernameChange = (event) => {
     this.setState({ username: event.target.value });
   }
 
-  handleEmailChange(event) {
-    this.setState({ email: event.target.value });
-  }
-
-  handlePaswordChange(event) {
+  handlePaswordChange = (event) => {
     this.setState({ password: event.target.value });
   }
 
