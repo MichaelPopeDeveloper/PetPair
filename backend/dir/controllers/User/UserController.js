@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
-var User_1 = require("../models/User");
-var Encryptor = require("../helper/Encryptor");
+var User_1 = require("../../models/User");
+var Encryptor = require("../../helper/Encryptor");
 var UserController = (function () {
     function UserController() {
     }
