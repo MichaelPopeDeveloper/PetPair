@@ -1,4 +1,5 @@
 import * as bodyParser from 'body-parser';
+import * as next from 'next';
 import * as express from 'express';
 import * as session from 'express-session';
 import * as passport from 'passport';
@@ -15,6 +16,9 @@ import { connect } from 'mongoose';
  *
  */
 export class Server {
+  private dev: any = process.env.NODE_ENV !== 'production';
+  private nextApp: any;
+  private handle: any;
   private port: any = process.env.PORT || 3001;
   public app: express.Application;
   private dbName = 'petPair';
@@ -37,6 +41,13 @@ export class Server {
    * @constructor
    */
   constructor() {
+
+    // start Next.js
+    // this.nextApp = next({ dev: this.dev });
+
+    // // initialize handle
+    // this.handle = this.nextApp.getRequestHandler();
+
     // create expressjs application.
     this.app = express();
 
@@ -71,6 +82,7 @@ export class Server {
     // add static paths
     //  this.app.use(express.static(path.join(__dirname, 'public')));
 
+
     // use logger middleware
     this.app.use(logger('dev'));
 
@@ -91,15 +103,15 @@ export class Server {
         cookie: {
           // httpOnly: true,
           // secure: true,
-        }
+        },
       }));
 
     this.app.use(passport.initialize());
     this.app.use(passport.session());
 
     connect(`mongodb://localhost:27017/${this.dbName}`, { useNewUrlParser: true })
-     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.log(err));
+      .then(() => console.log('Connected to MongoDB'))
+      .catch(err => console.log(err));
 
     // use cookie parser middleware
     // this.app.use(cookieParser("SECRET_GOES_HERE"));
@@ -119,7 +131,8 @@ export class Server {
   }
 
   private listen() {
-    this.app.listen(this.port, () => {
+    this.app.listen(this.port, (error: any) => {
+      if (error) console.log(error);
       console.log(`Listening on port ${this.port}`);
     });
   }
