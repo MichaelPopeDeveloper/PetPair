@@ -14,13 +14,13 @@ class Index extends React.Component {
   }
 
   static async getInitialProps({ req, res }) {
-    const user = await axios.post('http://localhost:3001/user/login', { username: 'eggs', password: 'eggs' })
-      .then(result => {
-        console.log(result.data);
-        return result.data.user;
-      })
-      .catch(error => console.log('error', error));
-    return { user };
+    // const user = await axios.post('http://localhost:3001/user/login', { username: 'eggs', password: 'eggs' })
+    //   .then(result => {
+    //     console.log(result.data);
+    //     return result.data.user;
+    //   })
+    //   .catch(error => console.log('error', error));
+    return { user: null };
   }
 
   render() {
@@ -35,7 +35,7 @@ class Index extends React.Component {
         <div className="container">
           <div className="row">
             <div className="col p-5 d-flex justify-content-center align-items-center">
-              <p>Hello Next.js, {this.props.user.username}</p>
+              <p>Hello Next.js, {this.props.user ? this.props.user.username : ''}</p>
               <Button>Hello!</Button>
             </div>
           </div>

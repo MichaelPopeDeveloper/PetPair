@@ -9,14 +9,14 @@ var passport = require('../../config/passport');
 var dev = process.env.NODE_ENV !== 'production';
 var nextApp = next({ dev: dev });
 var handle = nextApp.getRequestHandler();
+MiddlewareController_1["default"].SetNextJSHandle(handle);
 exports.UserRoute = express.Router();
 nextApp.prepare()
     .then(function () {
-    exports.UserRoute.get('*', function (req, res) {
-        return handle(req, res);
-    });
     exports.UserRoute.use(MiddlewareController_1["default"].LogRequestUser);
-    exports.UserRoute.get('/', MiddlewareController_1["default"].CheckIfSessionActive, UserController_1["default"].checkUser);
+    exports.UserRoute.get('/login', MiddlewareController_1["default"].UseNextJSHandle);
+    exports.UserRoute.get('/signup', MiddlewareController_1["default"].UseNextJSHandle);
+    exports.UserRoute.get('*', MiddlewareController_1["default"].CheckIfSessionActive, MiddlewareController_1["default"].UseNextJSHandle);
     exports.UserRoute.post('/login', passport.authenticate('local'), MiddlewareController_1["default"].CheckIfSessionActive, UserController_1["default"].Login);
     exports.UserRoute.post('/signup', UserController_1["default"].SignupMiddleware, passport.authenticate('local'), MiddlewareController_1["default"].CheckIfSessionActive, UserController_1["default"].Signup);
     exports.UserRoute.post('/logout', MiddlewareController_1["default"].CheckIfSessionActive, UserController_1["default"].Logout);

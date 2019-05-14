@@ -10,22 +10,24 @@ const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
+// Config Controllers to have handle
+MiddlewareController.SetNextJSHandle(handle);
+
 export const UserRoute = express.Router();
 nextApp.prepare()
   .then(() => {
 
-    UserRoute.get('*', (req, res) => {
-      return handle(req, res);
-    });
-
-    // UserRoute.get('/testpage/:id', (req: any, res: any) => {
-    //   const actualPage = '/test';
-    //   return nextApp.render(req, res, actualPage, req.params);
-    // })
-
     UserRoute.use(MiddlewareController.LogRequestUser);
 
-    UserRoute.get('/', MiddlewareController.CheckIfSessionActive, UserController.checkUser);
+
+    UserRoute.get('/login', MiddlewareController.UseNextJSHandle);
+    UserRoute.get('/signup', MiddlewareController.UseNextJSHandle);
+
+    UserRoute.get('*', MiddlewareController.CheckIfSessionActive, MiddlewareController.UseNextJSHandle);
+
+    // UserRoute.get('*', (req, res) => {
+    //   return handle(req, res);
+    // });
 
     UserRoute.post('/login', passport.authenticate('local'), MiddlewareController.CheckIfSessionActive, UserController.Login);
     UserRoute.post('/signup', UserController.SignupMiddleware, passport.authenticate('local'), MiddlewareController.CheckIfSessionActive, UserController.Signup);
