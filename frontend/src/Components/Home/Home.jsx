@@ -5,13 +5,13 @@ import { loginUser } from '../../actions/index';
 
 const mapStateToProps = state => {
     return { state };
-  };
-  
-  function mapDispatchToProps(dispatch) {
+};
+
+function mapDispatchToProps(dispatch) {
     return {
-      loginUser: user => dispatch(loginUser(user))
+        loginUser: user => dispatch(loginUser(user))
     };
-  }
+}
 
 class Home extends Component {
     constructor(props) {
@@ -23,15 +23,15 @@ class Home extends Component {
     render() {
         return (
             <div className="App">
-            <video id="background-video" loop autoPlay>
+                {/* <video id="background-video" loop autoPlay>
                 <source src={this.state.videoURL} type="video/mp4" />
                 <source src={this.state.videoURL} type="video/ogg" />
                 Your browser does not support the video tag.
-            </video>
-               <h1 className="display-1 pt-5 mt-5 mb-0 pb-0">Pet Pair</h1>
-               <p className="text-secondary mt-0 pt-0">Pairing people, with their favorite animals.</p>
+            </video> */}
+                <h1 className="display-1 pt-5 mt-5 mb-0 pb-0">Pet Pair</h1>
+                <p className="text-secondary mt-0 pt-0">Pairing people, with their favorite animals.</p>
 
-               <button className="btn btn-primary mt-5"> <i class="fas fa-map-marker-alt pr-2"></i> Find Animals In Your Area</button>
+                <button className="btn btn-primary mt-5"> <i class="fas fa-map-marker-alt pr-2"></i> Find Animals In Your Area</button>
             </div>
         );
     }
