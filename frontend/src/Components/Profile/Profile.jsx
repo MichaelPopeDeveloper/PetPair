@@ -21,16 +21,42 @@ class Profile extends Component {
     super(props);
     this.state = {
       animals: [],
+      latitude: null,
+      longitude: null,
     }
   }
 
   componentWillMount() {
-    this.auth();
+    this.getUserLocation()
+      .then(() => {
+        this.auth();
+      })
+  }
+
+  getUserLocation = () => {
+    return new Promise((resolve, reject) => {
+      if ("geolocation" in navigator) {
+        /* geolocation is available */
+        console.log('geolocation works!');
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log('position', position);
+          const { latitude, longitude } = position.coords;
+          this.setState({ latitude: latitude, longitude: longitude });
+          resolve('Location Found!')
+        })
+      } else {
+        reject('Location not available');
+        /* geolocation IS NOT available */
+        console.log('geolocation does not work!');
+      }
+    });
   }
 
   auth = () => {
+    console.log('state', this.state);
+    const { latitude, longitude } = this.state;
     const token = localStorage.getItem('token');
-    axios.get('https://api.petfinder.com/v2/animals?type=dog&page=2',
+    axios.get(`https://api.petfinder.com/v2/animals?type=dog&page=2&location=${latitude},${longitude}`,
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -52,40 +78,64 @@ class Profile extends Component {
       .catch(error => console.log(error));
   }
 
+  renderAnimalPhotos = () => {
+    const { animals } = this.state;
+    let imageCards = [[]];
+    if (animals.length > 0) {
+
+      animals.map(animal => {
+        if (animal) {
+
+        }
+        const currentImageGroup = imageCards[imageCards.length - 1];
+        const image =
+          <div className="col-sm d-flex flex-column justify-content-center align-items-center align-content-center">
+            <div className="card shadow" style={{ width: "18rem" }}>
+              <img className="card-img-top" src={animal && animal.photos && animal.photos[0] && animal.photos[0].full} />
+              <div className="card-body">
+                {animal && animal.photos && animal.photos[0] && animal.photos[0].full
+                  ? ''
+                  : <h5 className="card-title p-3 m-0 text-center"><b>No Image</b></h5>}
+                <h5 className="card-title p-0 m-0"><b>Name:</b> {animal.name}</h5>
+                <h5 className="card-title pt-2 m-0"><b>Breed:</b> {animal && animal.breeds && animal.breeds.primary}</h5>
+                <p className="card-text">{animal.description ? animal.description : 'No Description'}</p>
+                <a href="#" class="btn btn-primary">Contact Owner</a>
+              </div>
+            </div >
+          </div >;
+
+        if (currentImageGroup.length < 2) {
+          currentImageGroup.push(image);
+        } else {
+          imageCards.push([]);
+          currentImageGroup.push(image);
+        }
+      })
+    }
+    console.log('image cards', imageCards);
+    return imageCards.map(imageGroup => {
+      return (
+        <div className="row p-5">
+          {imageGroup}
+        </div>
+      );
+    })
+
+  }
+
 
   render() {
     return (
-      <div className="row">
-        <div className="col d-flex flex-column justify-content-center align-items-center align-content-center">
-          <div class="card" style={{ width: "18rem" }}>
-            <img className="card-img-top" src={"https://images.pexels.com/photos/2313393/pexels-photo-2313393.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"} />
-            <div className="card-body">
-              <h5 className="card-title">Card title</h5>
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
+      <div>
+        <div className="w-100 d-flex justify-content-center align-content-center align-items-center">
+          <form className="w-75 mt-5">
+            <div className="form-group">
+              {/* <label for="exampleInputEmail1">Email address</label> */}
+              <input type="search" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Search..." />
             </div>
-          </div>
+          </form>
         </div>
-        <div className="col d-flex flex-column justify-content-center align-items-center align-content-center">
-          <div class="card" style={{ width: "18rem" }}>
-            <img className="card-img-top" src={"https://images.pexels.com/photos/2313393/pexels-photo-2313393.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"} />
-            <div className="card-body">
-              <h5 className="card-title">Card title</h5>
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-          </div>
-        </div>
-        <div className="col d-flex flex-column justify-content-center align-items-center align-content-center">
-          <div class="card" style={{ width: "18rem" }}>
-            <img className="card-img-top" src={"https://images.pexels.com/photos/2313393/pexels-photo-2313393.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"} />
-            <div className="card-body">
-              <h5 className="card-title">Card title</h5>
-              <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-          </div>
-        </div>
+        {this.renderAnimalPhotos()}
       </div>
     );
   }
